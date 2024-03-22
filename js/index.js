@@ -1,7 +1,7 @@
 const path = require('path');
 const { app, BrowserWindow, ipcMain } = require('electron');
 const { sendMessage } = require('./llm-models/openai');
-const { saveToFile } = require('./utilities/saveHistory');
+const fs = require('fs').promises;
 const userDataPath = app.getPath('userData');
 
 function createWindow() {
@@ -51,5 +51,19 @@ ipcMain.handle('sendMessage', async (event, message) => {
   } catch (error) {
     console.error('Error handling sendMessage in main process:', error);
     return "Sorry, I couldn't send your message.";
+  }
+});
+
+ipcMain.handle('load-chat-history', async (event, llmId) => {
+  const chatLogsPath = path.join(userDataPath, 'chat_logs');
+  const fileName = `${llmId}.json`;
+  const filePath = path.join(chatLogsPath, fileName);
+
+  try {
+    const content = await fs.readFile(filePath, { encoding: 'utf8' });
+    return content;
+  } catch (error) {
+    console.error('Failed to load chat history:', error);
+    return "";
   }
 });

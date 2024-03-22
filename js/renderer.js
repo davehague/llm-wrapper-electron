@@ -1,4 +1,7 @@
 // renderer.js
+window.llmChatHistoriesLoaded = {};
+window.llmName = '';
+
 document.addEventListener("DOMContentLoaded", () => {
     console.log('DOM loaded at:', new Date().toLocaleString());
     console.trace("DOMContentLoaded triggered");
@@ -17,9 +20,11 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!isSelected) {
             item.classList.add('llm-item-selected');
             clearChatWindow();
-            onLLMItemSelected();
+            console.log(item);
+            onLLMItemSelected(item.id); 
+            llmName = item.getAttribute('llmname');
         }
-    }
+    }   
 
     llmItems.forEach(item => {
         item.addEventListener('click', () => handleLLMItemClick(item));
@@ -31,8 +36,35 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-function onLLMItemSelected() {
-    console.log('LLM item selected at:', new Date().toLocaleString());
+async function onLLMItemSelected(llmId) {
+    console.log('LLM item selected at:', new Date().toLocaleString(), 'ID:', llmId);
+
+    // Check if the chat for this LLM has already been loaded
+    if (!window.llmChatHistoriesLoaded[llmId]) {
+        try {
+            const chatHistory = await window.electronAPI.loadChatHistory(llmId);
+            if (chatHistory) {
+                displayChatHistory(chatHistory);
+                window.llmChatHistoriesLoaded[llmId] = true; 
+            }
+        } catch (error) {
+            console.error('Error loading chat history for', llmId, ':', error);
+        }
+    }
+}
+
+
+function displayChatHistory(chatHistory) {
+    const chatMessages = document.getElementById('chat-messages');
+    chatMessages.innerHTML = ''; 
+
+    const history = JSON.parse(chatHistory);
+    history.forEach(message => {
+        const sender = message.role === 'user' ? 'User' : llmName;
+        addMessageToChat(sender, message.content);
+    });
+
+    chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
 
@@ -45,7 +77,7 @@ document.getElementById('message-input').addEventListener('keydown', async (even
             event.target.value = '';
 
             const response = await window.electronAPI.sendMessage(message);
-            addMessageToChat('OpenAI', response);
+            addMessageToChat(llmName, response);
         }
     }
 });
@@ -56,7 +88,7 @@ function addMessageToChat(sender, message) {
         const chatMessages = document.getElementById('chat-messages');
         const messageDiv = document.createElement('div');
         messageDiv.classList.add('message');
-    
+
         if (sender === 'User') {
             messageDiv.classList.add('user-message');
             messageDiv.innerText = message;
@@ -64,9 +96,9 @@ function addMessageToChat(sender, message) {
             messageDiv.classList.add('llm-message');
             messageDiv.innerHTML = marked.parse(message);
         }
-    
+
         chatMessages.appendChild(messageDiv);
-    
+
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
     catch (error) {
