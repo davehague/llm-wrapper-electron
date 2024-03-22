@@ -1,6 +1,8 @@
 const path = require('path');
 const { app, BrowserWindow, ipcMain } = require('electron');
 const { sendMessage } = require('./llm-models/openai');
+const { saveToFile } = require('./utilities/saveHistory');
+const userDataPath = app.getPath('userData');
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -44,7 +46,7 @@ app.on('activate', () => {
 ipcMain.handle('sendMessage', async (event, message) => {
   try {
     console.log("Received message in main process:", message);
-    const response = await sendMessage(message);
+    const response = await sendMessage(userDataPath, message);
     return response;
   } catch (error) {
     console.error('Error handling sendMessage in main process:', error);

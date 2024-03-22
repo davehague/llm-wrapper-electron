@@ -1,10 +1,13 @@
 const fs = require('fs').promises;
 const path = require('path');
 
-async function saveToFile(llmService, modelName, messages) {
+async function saveToFile(userDataPath, llmService, modelName, messages) {
     try {
+        const chatLogsPath = path.join(userDataPath, 'chat_logs');
         const fileName = `${llmService}-${modelName}.json`;
-        const filePath = path.join(__dirname, '..', 'chat_logs', fileName);
+        const filePath = path.join(chatLogsPath, fileName);
+        console.log('Saving chat history to:', filePath);
+        
         await fs.mkdir(path.dirname(filePath), { recursive: true });
         const fileExists = await fs.access(filePath).then(() => true).catch(() => false);
 

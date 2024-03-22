@@ -15,7 +15,7 @@ let conversationHistory = [
   { role: "system", content: "Keep your answers short, less than 1 paragraph. When giving advice, give no more than three options" }
 ];
 
-async function sendMessage(text) {
+async function sendMessage(userDataPath, text) {
   const userMessage = { role: "user", content: text };
   conversationHistory.push(userMessage);
 
@@ -27,7 +27,7 @@ async function sendMessage(text) {
 
     const llmResponse = { role: "assistant", content: completion.choices[0].message.content };
 
-    saveToFile(llmService, model, [userMessage, llmResponse])
+    saveToFile(userDataPath, llmService, model, [userMessage, llmResponse])
       .catch(error => console.error('Failed to save file:', error));
 
     pruneConversationHistoryToTokenLimit(maxTokens * 0.9);
