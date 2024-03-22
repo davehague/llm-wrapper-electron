@@ -13,6 +13,9 @@
     "electron": "^29.1.5"
   },
   "dependencies": {
-    "electron-reload": "^2.0.0-alpha.1"
+    "dotenv": "^16.4.5",
+    "electron-reload": "^2.0.0-alpha.1",
+    "marked": "^12.0.1",
+    "openai": "^4.29.2"
   }
 }

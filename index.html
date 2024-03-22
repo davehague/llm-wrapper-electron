@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <title>LLM Wrapper</title>
     <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
+
 <body>
     <div id="app-container">
         <div id="navigation-bar">
             <div class="llm-item">
                 <img src="assets/OpenAI.png" alt="OpenAI Logo">
-              </div>
-              <div class="llm-item">
+            </div>
+            <div class="llm-item">
                 <img src="assets/GoogleGemini.png" alt="Google Gemini Logo">
-              </div>              
+            </div>
         </div>
         <div id="chat-container">
             <div id="chat-messages">
@@ -21,8 +23,11 @@
             </div>
             <div id="message-input-container">
                 <textarea id="message-input" placeholder="Type a message..."></textarea>
-            </div>            
+            </div>
         </div>
     </div>
+    <script src="renderer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </body>
+
 </html>

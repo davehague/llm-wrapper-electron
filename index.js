@@ -1,14 +1,22 @@
-require('electron-reload')(__dirname);
+const path = require('path');
+const { app, BrowserWindow, ipcMain } = require('electron');
+const { sendMessage } = require('./llm-models/openai');
 
-const { app, BrowserWindow } = require('electron');
+// Use electron-reload in development
+if (!app.isPackaged) {
+  require('electron-reload')(__dirname, {
+    electron: path.join(__dirname, 'node_modules', '.bin', 'electron')
+  });
+}
 
-function createWindow () {
-  // Create the browser window.
+
+function createWindow() {
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1600,
+    height: 900,
     webPreferences: {
-      nodeIntegration: true
+      preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true, // keep this true for security reasons
     }
   });
 
@@ -40,3 +48,9 @@ app.on('activate', () => {
     createWindow();
   }
 });
+
+ipcMain.handle('sendMessage', async (event, message) => {
+  const response = await sendMessage(message);
+  return response;
+});
+
