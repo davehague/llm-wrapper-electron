@@ -1,6 +1,7 @@
 const path = require('path');
 const { app, BrowserWindow, ipcMain } = require('electron');
-const { sendMessage } = require('./llm-models/openai');
+const { sendMessageOpenAI } = require('./llm-models/openai');
+const { sendMessageGoogle } = require('./llm-models/google');
 const fs = require('fs').promises;
 const userDataPath = app.getPath('userData');
 
@@ -43,10 +44,21 @@ app.on('activate', () => {
   }
 });
 
-ipcMain.handle('sendMessage', async (event, message) => {
+ipcMain.handle('send-message-openai', async (event, message) => {
   try {
     console.log("Received message in main process:", message);
-    const response = await sendMessage(userDataPath, message);
+    const response = await sendMessageOpenAI(userDataPath, message);
+    return response;
+  } catch (error) {
+    console.error('Error handling sendMessage in main process:', error);
+    return "Sorry, I couldn't send your message.";
+  }
+});
+
+ipcMain.handle('send-message-google', async (event, message) => {
+  try {
+    console.log("Received message in main process:", message);
+    const response = await sendMessageGoogle(userDataPath, message);
     return response;
   } catch (error) {
     console.error('Error handling sendMessage in main process:', error);

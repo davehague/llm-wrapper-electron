@@ -1,5 +1,6 @@
 // renderer.js
 window.llmChatHistoriesLoaded = {};
+window.llmId = '';
 window.llmName = '';
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -20,11 +21,13 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!isSelected) {
             item.classList.add('llm-item-selected');
             clearChatWindow();
-            console.log(item);
-            onLLMItemSelected(item.id); 
+            
             llmName = item.getAttribute('llmname');
+            llmId = item.id;
+
+            onLLMItemSelected(item.id);
         }
-    }   
+    }
 
     llmItems.forEach(item => {
         item.addEventListener('click', () => handleLLMItemClick(item));
@@ -45,7 +48,7 @@ async function onLLMItemSelected(llmId) {
             const chatHistory = await window.electronAPI.loadChatHistory(llmId);
             if (chatHistory) {
                 displayChatHistory(chatHistory);
-                window.llmChatHistoriesLoaded[llmId] = true; 
+                window.llmChatHistoriesLoaded[llmId] = true;
             }
         } catch (error) {
             console.error('Error loading chat history for', llmId, ':', error);
@@ -56,7 +59,7 @@ async function onLLMItemSelected(llmId) {
 
 function displayChatHistory(chatHistory) {
     const chatMessages = document.getElementById('chat-messages');
-    chatMessages.innerHTML = ''; 
+    chatMessages.innerHTML = '';
 
     const history = JSON.parse(chatHistory);
     history.forEach(message => {
@@ -76,7 +79,19 @@ document.getElementById('message-input').addEventListener('keydown', async (even
             addMessageToChat('User', message);
             event.target.value = '';
 
-            const response = await window.electronAPI.sendMessage(message);
+            let response;
+            switch (llmId) {
+                case 'google-gemini-1.0-pro':
+                    response = await window.google.sendMessage(message);
+                    break;
+                case 'openai-gpt-3.5-turbo':
+                    response = await window.openAI.sendMessage(message);
+                    break;
+                default:
+                    response = 'Unknown LLM selected: ' + llmName;
+                    break;
+            }
+
             addMessageToChat(llmName, response);
         }
     }

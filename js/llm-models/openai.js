@@ -15,7 +15,7 @@ let conversationHistory = [
   { role: "system", content: "Keep your answers short, less than 1 paragraph. When giving advice, give no more than three options" }
 ];
 
-async function sendMessage(userDataPath, text) {
+async function sendMessageOpenAI(userDataPath, text) {
   const userMessage = { role: "user", content: text };
   conversationHistory.push(userMessage);
 
@@ -62,4 +62,4 @@ function pruneConversationHistoryToTokenLimit(maxTokens) {
   }
 }
 
-module.exports = { sendMessage };
+module.exports = { sendMessageOpenAI };
