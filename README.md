@@ -12,7 +12,7 @@ This is an Electron app which is intended to be a wrapper around multiple LLMs. 
 OPENAI_API_KEY=sk-YOUR-KEY-HERE
 ```
 
-Then, run `npm start` to start the project
+Then, run `npm run dev` to start the project
 
 
 # Notes about Electron
@@ -24,6 +24,9 @@ win.webContents.openDevTools(); // This line opens the dev tools
 ```
 
 2. Use `Ctrl + Shift + I` after the program is running
+
+## Hot reload
+This project uses `nodemon` to perform hot reload
 
 
 ## Understanding the structure

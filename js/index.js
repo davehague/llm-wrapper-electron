@@ -2,14 +2,6 @@ const path = require('path');
 const { app, BrowserWindow, ipcMain } = require('electron');
 const { sendMessage } = require('./llm-models/openai');
 
-// Use electron-reload in development
-if (!app.isPackaged) {
-  require('electron-reload')(__dirname, {
-    electron: path.join(__dirname, 'node_modules', '.bin', 'electron')
-  });
-}
-
-
 function createWindow() {
   const win = new BrowserWindow({
     width: 1600,
@@ -21,7 +13,7 @@ function createWindow() {
   });
 
   // and load the index.html of the app.
-  win.loadFile('index.html');
+  win.loadFile('html/index.html');
 
   // Open the DevTools.
   win.webContents.openDevTools();
@@ -50,7 +42,12 @@ app.on('activate', () => {
 });
 
 ipcMain.handle('sendMessage', async (event, message) => {
-  const response = await sendMessage(message);
-  return response;
+  try {
+    console.log("Received message in main process:", message);
+    const response = await sendMessage(message);
+    return response;
+  } catch (error) {
+    console.error('Error handling sendMessage in main process:', error);
+    return "Sorry, I couldn't send your message.";
+  }
 });
-

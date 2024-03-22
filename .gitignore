@@ -2,6 +2,7 @@
 bower_components
 node_modules
 dist
+chat_logs
 
 #files
 *.tgz

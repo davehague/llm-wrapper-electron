@@ -39,12 +39,17 @@ html {
 
 .llm-item {
     padding: 10px;
+    margin: 5px;
     border-bottom: 1px solid #23272a;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 8px;
+}
+
+.llm-item-selected {
+    background-color: #555; 
 }
 
 .llm-item img {
@@ -54,7 +59,7 @@ html {
 }
 
 .llm-item:hover {
-    background-color: #3a3e43;
+    background-color: lightyellow;
 }
 
 #chat-container {

@@ -2,20 +2,33 @@
   "name": "llm-wrapper-electron",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "js/index.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "dev": "nodemon --exec electron ."
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^29.1.5"
+    "electron": "^29.1.5",
+    "nodemon": "^3.1.0"
   },
   "dependencies": {
     "dotenv": "^16.4.5",
-    "electron-reload": "^2.0.0-alpha.1",
     "marked": "^12.0.1",
     "openai": "^4.29.2"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "chat_logs/*"
+    ],
+    "watch": [
+      "css/",
+      "html/",
+      "js/"
+    ],
+    "ext": "js,css,html",
+    "exec": "electron ."
   }
 }
