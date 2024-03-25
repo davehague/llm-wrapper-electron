@@ -11,6 +11,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const llmItems = document.querySelectorAll('.llm-item');
     const chatMessages = document.getElementById('chat-messages');
 
+      // Load and store chat histories for all LLMs
+      llmItems.forEach(item => {
+        const llmId = item.id;
+        loadAndStoreChatHistory(llmId);
+    });
+
     function clearChatWindow() {
         console.log('Clearing chat window');
         if (chatMessages) {
@@ -21,16 +27,22 @@ document.addEventListener("DOMContentLoaded", () => {
     function handleLLMItemClick(item: Element) {
         console.log('LLM item clicked at:', new Date().toLocaleString());
         const isSelected = item.classList.contains('llm-item-selected');
+        const llmItems = document.querySelectorAll('.llm-item');
         llmItems.forEach(i => i.classList.remove('llm-item-selected'));
         if (!isSelected) {
             item.classList.add('llm-item-selected');
             clearChatWindow();
-
+    
             window.llmName = item.getAttribute('llmname') ?? '';
             window.llmId = item.id;
-
-            onLLMItemSelected(item.id);
+    
+            const chatHistory = window.llmChatHistoriesLoaded[item.id];
+            if (chatHistory) {
+                displayChatHistory(chatHistory); // Adjust this to handle the pre-parsed chat history
+            }
         }
+
+        onLLMItemSelected(item.id);
     }
 
     llmItems.forEach(item => {
@@ -42,17 +54,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-
-async function onLLMItemSelected(llmId: string) {
-    console.log('LLM item selected at:', new Date().toLocaleString(), 'ID:', llmId);
-
-    // Check if the chat for this LLM has already been loaded
+async function loadAndStoreChatHistory(llmId: string) {
     if (!window.llmChatHistoriesLoaded[llmId]) {
         try {
             const chatHistory = await window.electronAPI.loadChatHistory(llmId);
             if (chatHistory) {
-                displayChatHistory(chatHistory);
-                window.llmChatHistoriesLoaded[llmId] = true;
+                window.llmChatHistoriesLoaded[llmId] = chatHistory;
             }
         } catch (error) {
             console.error('Error loading chat history for', llmId, ':', error);
@@ -61,22 +68,37 @@ async function onLLMItemSelected(llmId: string) {
 }
 
 
-function displayChatHistory(chatHistory: string) {
+async function onLLMItemSelected(llmId: string) {
+    console.log('LLM item selected at:', new Date().toLocaleString(), 'ID:', llmId);
+
+    // Check if the chat for this LLM has already been loaded
+    if (!window.llmChatHistoriesLoaded[llmId]) {
+        try {
+            await loadAndStoreChatHistory(llmId);
+            displayChatHistory(window.llmChatHistoriesLoaded[llmId]);
+        } catch (error) {
+            console.error('Error loading chat history for', llmId, ':', error);
+        }
+    }
+}
+
+
+function displayChatHistory(chatHistory: { role: string; message: string; }[]) {
+    // Assuming chatHistory is now an array of message objects
     const chatMessages = document.getElementById('chat-messages');
     if (chatMessages) {
         chatMessages.innerHTML = '';
 
-
-        const history = JSON.parse(chatHistory);
-        history.forEach((message: { role: string; content: any; }) => {
-            const sender = message.role === 'user' ? 'User' : window.llmName;
-            addMessageToChat(sender, message.content);
-        });
+        if (Array.isArray(chatHistory)) { 
+            chatHistory.forEach((message: { role: string; message: string; }) => {
+                const sender = message.role === 'user' ? 'User' : window.llmName;
+                addMessageToChat(sender, message.message);
+            });
+        }
 
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 }
-
 
 document.getElementById('message-input')?.addEventListener('keydown', async (event) => {
     if (event.key === 'Enter') {
@@ -118,14 +140,8 @@ async function addMessageToChat(sender: string, message: string) {
         if (chatMessages) {
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message');
-
-            if (sender === 'User') {
-                messageDiv.classList.add('user-message');
-                messageDiv.innerText = message;
-            } else {
-                messageDiv.classList.add('llm-message');
-                messageDiv.innerHTML = await marked.parse(message);
-            }
+            messageDiv.classList.add(sender === 'User' ? 'user-message' : 'llm-message');
+            messageDiv.innerHTML = await marked.parse(message);
 
             chatMessages.appendChild(messageDiv);
 

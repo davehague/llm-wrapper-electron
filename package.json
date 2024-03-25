@@ -30,7 +30,6 @@
   },
   "nodemonConfig": {
     "ignore": [
-      "chat_logs/*",
       "dist/*"
     ],
     "watch": [

@@ -74,9 +74,39 @@ ipcMain.handle('load-chat-history', async (event, llmId) => {
 
   try {
     const content = await fs.readFile(filePath, { encoding: 'utf8' });
-    return content;
+    const messages = JSON.parse(content);
+    return transformMessages(llmId, messages);
   } catch (error) {
     console.error('Failed to load chat history:', error);
-    return "";
+    return [];
   }
 });
+
+function transformMessages(llmId: string, messages: any[]) {
+  switch (llmId) {
+    case 'google-gemini-1.0-pro':
+      return transformGeminiMessages(messages);
+    case 'openai-gpt-3.5-turbo':
+      return transformOpenAIMessages(messages);
+    default:
+      return [];
+  }
+}
+
+function transformOpenAIMessages(messages: any[]) {
+  return messages.map((message) => {
+    return {
+      role: message.role,
+      message: message.content,
+    };
+  });
+}
+
+function transformGeminiMessages(messages: any[]) {
+  return messages.map((message) => {
+    return {
+      role: message.role,
+      message: message.parts[0].text,
+    };
+  });
+} 
