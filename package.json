@@ -2,17 +2,25 @@
   "name": "llm-wrapper-electron",
   "version": "1.0.0",
   "description": "",
-  "main": "js/index.js",
+  "main": "dist/main/index.js",
   "scripts": {
     "start": "electron .",
-    "dev": "nodemon --exec electron ."
+    "dev": "tsc-watch --onSuccess \"electron .\"",
+    "build": "tsc && npm run copy-static",
+    "copy-static": "npm run copy-html && npm run copy-css",
+    "copy-html": "copy src\\renderer\\html\\*.html dist",
+    "copy-css": "copy src\\renderer\\css\\*.css dist"    
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/electron": "^1.6.10",
+    "@types/node": "^20.11.30",
     "electron": "^29.1.5",
-    "nodemon": "^3.1.0"
+    "nodemon": "^3.1.0",
+    "tsc-watch": "^6.0.4",
+    "typescript": "^5.4.3"
   },
   "dependencies": {
     "@google/generative-ai": "^0.3.1",
@@ -22,14 +30,13 @@
   },
   "nodemonConfig": {
     "ignore": [
-      "chat_logs/*"
+      "chat_logs/*",
+      "dist/*"
     ],
     "watch": [
-      "css/",
-      "html/",
-      "js/"
+      "src/"
     ],
-    "ext": "js,css,html",
-    "exec": "electron ."
+    "ext": "ts,js,css,html",
+    "exec": "npm run build && electron ."
   }
 }

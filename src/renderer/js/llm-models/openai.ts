@@ -1,7 +1,9 @@
 // openai.js
-require('dotenv').config();
-const { OpenAI } = require('openai');
-const { saveToFile } = require('../utilities/saveHistory');
+import dotenv from 'dotenv';
+dotenv.config();
+import { OpenAI } from 'openai'; // Assuming 'openai' package is ES6 module compatible
+import { saveToFile } from '../utilities/saveHistory';
+import { OpenAIMessage } from '@/types/llmWrapperTypes';
 
 const llmService = "openai";
 const model = "gpt-3.5-turbo";
@@ -11,24 +13,24 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-let conversationHistory = [
-  { role: "system", content: "Keep your answers short, less than 1 paragraph. When giving advice, give no more than three options" }
+let conversationHistory: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
+  { role: "system", content: "Keep your answers short, less than 1 paragraph. When giving advice, give no more than three options" },
 ];
 
-async function sendMessageOpenAI(userDataPath, text) {
-  const userMessage = { role: "user", content: text };
-  conversationHistory.push(userMessage);
-
+export async function sendMessageOpenAI(userDataPath: string, text: string): Promise<string> {
   try {
+    const userMessage: OpenAIMessage = { role: "user", content: text };
+    conversationHistory.push(userMessage);
+
     const completion = await openai.chat.completions.create({
       model: model,
-      messages: conversationHistory,
+      messages: conversationHistory
     });
 
-    const llmResponse = { role: "assistant", content: completion.choices[0].message.content };
+    const llmResponse: OpenAIMessage = { role: "assistant", content: completion.choices[0].message.content ?? "" };
 
     saveToFile(userDataPath, llmService, model, [userMessage, llmResponse])
-      .catch(error => console.error('Failed to save file:', error));
+      .catch((error: any) => console.error('Failed to save file:', error));
 
     pruneConversationHistoryToTokenLimit(maxTokens * 0.9);
     conversationHistory.push(llmResponse);
@@ -41,19 +43,21 @@ async function sendMessageOpenAI(userDataPath, text) {
   }
 }
 
-function approximateTokenCount(text) {
+function approximateTokenCount(text: string): number {
   const avgCharsPerToken = 4; // An approximation of average characters per token
   return Math.ceil(text.length / avgCharsPerToken);
 }
 
-function pruneConversationHistoryToTokenLimit(maxTokens) {
+function pruneConversationHistoryToTokenLimit(maxTokens: number): void {
+
   let totalTokens = 0;
 
   // Count tokens from the end of the conversationHistory array until maxTokens limit is reached
   let index = conversationHistory.length;
   while (index-- > 0 && totalTokens <= maxTokens) {
     const messageText = conversationHistory[index].content;
-    totalTokens += approximateTokenCount(messageText);
+    
+    totalTokens += approximateTokenCount(messageText as string);
   }
 
   if (totalTokens > maxTokens) {
@@ -62,4 +66,4 @@ function pruneConversationHistoryToTokenLimit(maxTokens) {
   }
 }
 
-module.exports = { sendMessageOpenAI };
+

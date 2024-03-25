@@ -1,4 +1,6 @@
 // renderer.js
+
+// From global.d.ts
 window.llmChatHistoriesLoaded = {};
 window.llmId = '';
 window.llmName = '';
@@ -11,19 +13,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function clearChatWindow() {
         console.log('Clearing chat window');
-        chatMessages.innerHTML = '';
+        if (chatMessages) {
+            chatMessages.innerHTML = '';
+        }
     }
 
-    function handleLLMItemClick(item) {
+    function handleLLMItemClick(item: Element) {
         console.log('LLM item clicked at:', new Date().toLocaleString());
         const isSelected = item.classList.contains('llm-item-selected');
         llmItems.forEach(i => i.classList.remove('llm-item-selected'));
         if (!isSelected) {
             item.classList.add('llm-item-selected');
             clearChatWindow();
-            
-            llmName = item.getAttribute('llmname');
-            llmId = item.id;
+
+            window.llmName = item.getAttribute('llmname') ?? '';
+            window.llmId = item.id;
 
             onLLMItemSelected(item.id);
         }
@@ -39,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-async function onLLMItemSelected(llmId) {
+async function onLLMItemSelected(llmId: string) {
     console.log('LLM item selected at:', new Date().toLocaleString(), 'ID:', llmId);
 
     // Check if the chat for this LLM has already been loaded
@@ -57,30 +61,36 @@ async function onLLMItemSelected(llmId) {
 }
 
 
-function displayChatHistory(chatHistory) {
+function displayChatHistory(chatHistory: string) {
     const chatMessages = document.getElementById('chat-messages');
-    chatMessages.innerHTML = '';
+    if (chatMessages) {
+        chatMessages.innerHTML = '';
 
-    const history = JSON.parse(chatHistory);
-    history.forEach(message => {
-        const sender = message.role === 'user' ? 'User' : llmName;
-        addMessageToChat(sender, message.content);
-    });
 
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+        const history = JSON.parse(chatHistory);
+        history.forEach((message: { role: string; content: any; }) => {
+            const sender = message.role === 'user' ? 'User' : window.llmName;
+            addMessageToChat(sender, message.content);
+        });
+
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
 }
 
 
-document.getElementById('message-input').addEventListener('keydown', async (event) => {
+document.getElementById('message-input')?.addEventListener('keydown', async (event) => {
     if (event.key === 'Enter') {
         event.preventDefault();
-        const message = event.target.value.trim();
+
+        const inputElement = event.target as HTMLInputElement;
+        const message = inputElement.value.trim();
+        
         if (message) {
             addMessageToChat('User', message);
-            event.target.value = '';
+            inputElement.value = ''; 
 
-            let response;
-            switch (llmId) {
+            let response: string;
+            switch (window.llmId) { 
                 case 'google-gemini-1.0-pro':
                     response = await window.google.sendMessage(message);
                     break;
@@ -88,33 +98,39 @@ document.getElementById('message-input').addEventListener('keydown', async (even
                     response = await window.openAI.sendMessage(message);
                     break;
                 default:
-                    response = 'Unknown LLM selected: ' + llmName;
+                    response = `Unknown LLM selected: ${window.llmName}`;
                     break;
             }
 
-            addMessageToChat(llmName, response);
+            addMessageToChat(window.llmName, response);
         }
     }
 });
 
+declare var marked: {
+    parse: (markdown: string) => Promise<string>;
+};
 
-function addMessageToChat(sender, message) {
+async function addMessageToChat(sender: string, message: string) {
     try {
         const chatMessages = document.getElementById('chat-messages');
-        const messageDiv = document.createElement('div');
-        messageDiv.classList.add('message');
 
-        if (sender === 'User') {
-            messageDiv.classList.add('user-message');
-            messageDiv.innerText = message;
-        } else {
-            messageDiv.classList.add('llm-message');
-            messageDiv.innerHTML = marked.parse(message);
+        if (chatMessages) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+
+            if (sender === 'User') {
+                messageDiv.classList.add('user-message');
+                messageDiv.innerText = message;
+            } else {
+                messageDiv.classList.add('llm-message');
+                messageDiv.innerHTML = await marked.parse(message);
+            }
+
+            chatMessages.appendChild(messageDiv);
+
+            chatMessages.scrollTop = chatMessages.scrollHeight;
         }
-
-        chatMessages.appendChild(messageDiv);
-
-        chatMessages.scrollTop = chatMessages.scrollHeight;
     }
     catch (error) {
         console.error('Error adding message to chat:', error);

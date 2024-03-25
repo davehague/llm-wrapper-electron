@@ -1,13 +1,14 @@
-const fs = require('fs').promises;
-const path = require('path');
+import fs from 'fs/promises';
+import path from 'path';
+import { OpenAIMessage } from '@/types/llmWrapperTypes';
 
-async function saveToFile(userDataPath, llmService, modelName, messages) {
+async function saveToFile(userDataPath: string, llmService: string, modelName: string, messages: OpenAIMessage[]): Promise<void> {
     try {
         const chatLogsPath = path.join(userDataPath, 'chat_logs');
         const fileName = `${llmService}-${modelName}.json`;
         const filePath = path.join(chatLogsPath, fileName);
         console.log('Saving chat history to:', filePath);
-        
+
         await fs.mkdir(path.dirname(filePath), { recursive: true });
         const fileExists = await fs.access(filePath).then(() => true).catch(() => false);
 
@@ -25,4 +26,5 @@ async function saveToFile(userDataPath, llmService, modelName, messages) {
     }
 }
 
-module.exports = { saveToFile };
+export { saveToFile };
+

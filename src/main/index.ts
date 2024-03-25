@@ -1,8 +1,9 @@
-const path = require('path');
-const { app, BrowserWindow, ipcMain } = require('electron');
-const { sendMessageOpenAI } = require('./llm-models/openai');
-const { sendMessageGoogle } = require('./llm-models/google');
-const fs = require('fs').promises;
+import path from 'path';
+import { app, BrowserWindow, ipcMain } from 'electron';
+import { sendMessageOpenAI } from '../renderer/js/llm-models/openai';
+import { sendMessageGoogle } from '../renderer/js/llm-models/google';
+import fs from 'fs/promises';
+
 const userDataPath = app.getPath('userData');
 
 function createWindow() {
@@ -10,13 +11,13 @@ function createWindow() {
     width: 1600,
     height: 900,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, '../preload/preload.js'),
       contextIsolation: true, // keep this true for security reasons
     }
   });
 
   // and load the index.html of the app.
-  win.loadFile('html/index.html');
+  win.loadFile('./dist/index.html');
 
   // Open the DevTools.
   win.webContents.openDevTools();
