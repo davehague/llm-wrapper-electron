@@ -2,7 +2,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { OpenAIMessage } from '@/types/llmWrapperTypes';
 
-async function saveToFile(userDataPath: string, llmService: string, modelName: string, messages: OpenAIMessage[]): Promise<void> {
+async function saveToFile(userDataPath: string, llmService: string, modelName: string, messages: any[]): Promise<void> {
     try {
         const chatLogsPath = path.join(userDataPath, 'chat_logs');
         const fileName = `${llmService}-${modelName}.json`;

@@ -12,7 +12,7 @@ This is an Electron app which is intended to be a wrapper around multiple LLMs. 
 OPENAI_API_KEY=sk-YOUR-KEY-HERE
 ```
 
-Then, run `npm run dev` to start the project
+Then, run `npm run build` to build and then `npm run dev` to start the project.
 
 
 # Notes about Electron
