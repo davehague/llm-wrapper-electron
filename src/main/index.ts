@@ -56,10 +56,10 @@ ipcMain.handle('retrieve-key', async (event, keyName) => {
   return retrievekeyFromFile(keyName);
 });
 
-ipcMain.handle('send-message-openai', async (event, message) => {
+ipcMain.handle('send-message-openai', async (event, message, model) => {
   try {
     console.log("Received message in main process:", message);
-    const response = await sendMessageOpenAI(userDataPath, message);
+    const response = await sendMessageOpenAI(userDataPath, message, model);
     return response;
   } catch (error) {
     console.error('Error handling sendMessage in main process:', error);
@@ -67,10 +67,10 @@ ipcMain.handle('send-message-openai', async (event, message) => {
   }
 });
 
-ipcMain.handle('send-message-google', async (event, message) => {
+ipcMain.handle('send-message-google', async (event, message, model) => {
   try {
     console.log("Received message in main process:", message);
-    const response = await sendMessageGoogle(userDataPath, message);
+    const response = await sendMessageGoogle(userDataPath, message, model);
     return response;
   } catch (error) {
     console.error('Error handling sendMessage in main process:', error);
@@ -84,6 +84,12 @@ ipcMain.handle('load-chat-history', async (event, llmId) => {
   const filePath = path.join(chatLogsPath, fileName);
 
   try {
+    const fileExists = await fs.access(filePath).then(() => true).catch(() => false);
+    if (!fileExists) {
+      console.log('Chat history file does not exist:', filePath);
+      return [];
+    }
+
     const content = await fs.readFile(filePath, { encoding: 'utf8' });
     const messages = JSON.parse(content);
     return transformMessages(llmId, messages);
@@ -94,17 +100,21 @@ ipcMain.handle('load-chat-history', async (event, llmId) => {
 });
 
 function transformMessages(llmId: string, messages: any[]) {
-  switch (llmId) {
-    case 'google-gemini-1.0-pro':
+  console.log('Transforming messages for llmId:', llmId);
+  switch (true) {
+    case llmId.startsWith('gpt'):
+      return transformRoleContentMessages(messages);
+    case llmId.startsWith('gemini'):
       return transformGeminiMessages(messages);
-    case 'openai-gpt-3.5-turbo':
-      return transformOpenAIMessages(messages);
     default:
+      console.error('Not a recognized llmId:', llmId);
       return [];
   }
 }
 
-function transformOpenAIMessages(messages: any[]) {
+
+function transformRoleContentMessages(messages: any[]) {
+  console.log('Transforming role-content messages:', messages);
   return messages.map((message) => {
     return {
       role: message.role,
@@ -114,6 +124,7 @@ function transformOpenAIMessages(messages: any[]) {
 }
 
 function transformGeminiMessages(messages: any[]) {
+  console.log('Transforming Gemini messages:', messages);
   return messages.map((message) => {
     return {
       role: message.role,

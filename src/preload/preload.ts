@@ -7,10 +7,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
 });
 
 contextBridge.exposeInMainWorld('openAI', {
-    sendMessage: (message: string) => ipcRenderer.invoke('send-message-openai', message),
+    sendMessage: (message: string, model: string) => ipcRenderer.invoke('send-message-openai', message, model),
 });
 
 contextBridge.exposeInMainWorld('google', {
-    sendMessage: (message: string) => ipcRenderer.invoke('send-message-google', message),
+    sendMessage: (message: string, model: string) => ipcRenderer.invoke('send-message-google', message, model),
 });
 

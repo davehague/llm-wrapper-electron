@@ -6,13 +6,11 @@ import { GeminiMessageHistory } from '@/types/llmWrapperTypes';
 
 
 const llmService = "google";
-const modelName = "gemini-1.0-pro";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string);
-
 let chatHistory: Content[] = [];
 
-async function sendMessageGoogle(userDataPath: string, originalMessage: string): Promise<string> {
+async function sendMessageGoogle(userDataPath: string, originalMessage: string, modelName: string): Promise<string> {
     const userMessage = { role: "user", parts: [{ text: originalMessage }] };
 
     try {
@@ -39,7 +37,7 @@ async function sendMessageGoogle(userDataPath: string, originalMessage: string):
             },
         ];
 
-        const model = genAI.getGenerativeModel({ model: "gemini-1.0-pro", safetySettings });
+        const model = genAI.getGenerativeModel({ model: modelName, safetySettings });
 
         const chat = model.startChat({
             history: chatHistory,
@@ -52,7 +50,7 @@ async function sendMessageGoogle(userDataPath: string, originalMessage: string):
         const response = await result.response;
         const text = response.text();
 
-        saveToFile(userDataPath, llmService, modelName, [userMessage, response.candidates && response.candidates[0]?.content])
+        saveToFile(userDataPath, modelName, [userMessage, response.candidates && response.candidates[0]?.content])
             .catch((error: any) => console.error('Failed to save file:', error));
 
         chatHistory = await chat.getHistory();

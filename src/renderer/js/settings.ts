@@ -29,3 +29,25 @@ document.getElementById('cancel-settings')!.addEventListener('click', () => {
 document.getElementById('cancel-settings')!.addEventListener('click', () => {
     window.location.href = 'index.html';
 });
+
+async function loadAPIKeys() {
+    try {
+        const openaiKey = await window.electronAPI.retrieveKey('OPENAI_API_KEY');
+        const googleKey = await window.electronAPI.retrieveKey('GEMINI_API_KEY');
+
+        const openaiKeyElement = document.getElementById('openai-api-key') as HTMLInputElement;
+        const googleKeyElement = document.getElementById('google-gemini-api-key') as HTMLInputElement;
+
+        if (openaiKeyElement && openaiKey !== null) {
+            openaiKeyElement.value = openaiKey;
+        }
+        if (googleKeyElement && googleKey !== null) {
+            googleKeyElement.value = googleKey;
+        }
+    } catch (error) {
+        console.error('Error loading API keys:', error);
+        alert('Failed to load API keys. Please try again.');
+    }
+}
+
+loadAPIKeys();

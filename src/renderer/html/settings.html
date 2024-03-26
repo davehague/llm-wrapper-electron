@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Settings</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
+    <link rel="stylesheet" type="text/css" href="settings.css">
 </head>
 
 <body>
@@ -14,11 +14,18 @@
             <img src="../assets/x-button.png" alt="Cancel" id="cancel-settings" class="settings-nav-button">
         </div>
         <div id="api-keys-form">
-            <label for="openai-api-key">OpenAI API Key:</label>
-            <input type="text" id="openai-api-key" name="openai-api-key" placeholder="Enter OpenAI API Key">
-            
-            <label for="google-gemini-api-key">Google Gemini API Key:</label>
-            <input type="text" id="google-gemini-api-key" name="google-gemini-api-key" placeholder="Enter Google Gemini API Key">
+            <table>
+                <tr>
+                    <td><label for="openai-api-key">OpenAI API Key:</label></td>
+                    <td><input type="text" id="openai-api-key" name="openai-api-key" placeholder="Enter OpenAI API Key">
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="google-gemini-api-key">Google Gemini API Key:</label></td>
+                    <td><input type="text" id="google-gemini-api-key" name="google-gemini-api-key"
+                            placeholder="Enter Google Gemini API Key"></td>
+                </tr>
+            </table>
         </div>
     </div>
     <script src="renderer/js/settings.js"></script>

@@ -10,10 +10,10 @@ declare global {
             retrieveKey: (key: string) => Promise<string>;
         };
         google: {
-            sendMessage: (message: string) => Promise<string>;
+            sendMessage: (message: string, model: string) => Promise<string>;
         };
         openAI: {
-            sendMessage: (message: string) => Promise<string>;
+            sendMessage: (message: string, model: string) => Promise<string>;
         };
     }
 }

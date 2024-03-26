@@ -15,8 +15,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const llmItems = document.querySelectorAll('.llm-item');
     const chatMessages = document.getElementById('chat-messages');
 
-      // Load and store chat histories for all LLMs
-      llmItems.forEach(item => {
+    // Load and store chat histories for all LLMs
+    llmItems.forEach(item => {
         const llmId = item.id;
         loadAndStoreChatHistory(llmId);
     });
@@ -36,10 +36,10 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!isSelected) {
             item.classList.add('llm-item-selected');
             clearChatWindow();
-    
+
             window.llmName = item.getAttribute('llmname') ?? '';
             window.llmId = item.id;
-    
+
             const chatHistory = window.llmChatHistoriesLoaded[item.id];
             if (chatHistory) {
                 displayChatHistory(chatHistory); // Adjust this to handle the pre-parsed chat history
@@ -93,7 +93,7 @@ function displayChatHistory(chatHistory: { role: string; message: string; }[]) {
     if (chatMessages) {
         chatMessages.innerHTML = '';
 
-        if (Array.isArray(chatHistory)) { 
+        if (Array.isArray(chatHistory)) {
             chatHistory.forEach((message: { role: string; message: string; }) => {
                 const sender = message.role === 'user' ? 'User' : window.llmName;
                 addMessageToChat(sender, message.message);
@@ -110,22 +110,20 @@ document.getElementById('message-input')?.addEventListener('keydown', async (eve
 
         const inputElement = event.target as HTMLInputElement;
         const message = inputElement.value.trim();
-        
+
         if (message) {
             addMessageToChat('User', message);
-            inputElement.value = ''; 
+            inputElement.value = '';
 
             let response: string;
-            switch (window.llmId) { 
-                case 'google-gemini-1.0-pro':
-                    response = await window.google.sendMessage(message);
-                    break;
-                case 'openai-gpt-3.5-turbo':
-                    response = await window.openAI.sendMessage(message);
-                    break;
-                default:
-                    response = `Unknown LLM selected: ${window.llmName}`;
-                    break;
+            if (window.llmId.startsWith('gemini')) {
+                response = await window.google.sendMessage(message, window.llmId);
+            }
+            else if (window.llmId.startsWith('gpt')) {
+                response = await window.openAI.sendMessage(message, window.llmId);
+            }
+            else {
+                response = `Not a recognized llmId: ${window.llmId}`;
             }
 
             addMessageToChat(window.llmName, response);

@@ -37,6 +37,7 @@ html {
     text-align: left;
 }
 
+.side-nav-button,
 .llm-item {
     padding: 10px;
     margin: 5px;
@@ -52,6 +53,7 @@ html {
     background-color: #555; 
 }
 
+.side-nav-button img,
 .llm-item img {
     max-width: 100%;
     min-height: 50px;

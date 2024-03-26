@@ -7,7 +7,6 @@ import { OpenAIMessage } from '@/types/llmWrapperTypes';
 import { retrievekeyFromFile } from '../utilities/keyManager';
 
 const llmService = "openai";
-const model = "gpt-3.5-turbo";
 
 const maxTokens = 4096;
 let openAI: OpenAI;
@@ -19,10 +18,11 @@ async function initializeOpenAI() {
 }
 
 let conversationHistory: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
-  { role: "system", content: "Keep your answers short, less than 1 paragraph. When giving advice, give no more than three options" },
+  // { role: "system", content: "Keep your answers short, less than 1 paragraph. When giving advice, give no more than three options" },
+  { role: "system", content: "You are a helpful chatbot." },
 ];
 
-export async function sendMessageOpenAI(userDataPath: string, text: string): Promise<string> {
+export async function sendMessageOpenAI(userDataPath: string, text: string, model: string): Promise<string> {
   try {
     if(!isInitialized) {
       await initializeOpenAI();
@@ -39,7 +39,7 @@ export async function sendMessageOpenAI(userDataPath: string, text: string): Pro
 
     const llmResponse: OpenAIMessage = { role: "assistant", content: completion.choices[0].message.content ?? "" };
 
-    saveToFile(userDataPath, llmService, model, [userMessage, llmResponse])
+    saveToFile(userDataPath, model, [userMessage, llmResponse])
       .catch((error: any) => console.error('Failed to save file:', error));
 
     pruneConversationHistoryToTokenLimit(maxTokens * 0.9);
