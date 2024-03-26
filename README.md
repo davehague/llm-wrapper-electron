@@ -35,3 +35,11 @@ This project uses `nodemon` to perform hot reload
 **preload.js** file is a script that gets executed before the renderer process is loaded. It has access to Node.js APIs and can safely expose selected functionality from the main process to the renderer process
 
 **renderer.js** file is the script that controls the web pages. It's akin to the JavaScript you would write for a regular web page, and it runs in the "renderer process."
+
+# Build
+
+## Creating a self signed certificate
+$cert = New-SelfSignedCertificate -DnsName davehague.com -CertStoreLocation "cert:\CurrentUser\My" -KeyAlgorithm RSA -KeyLength 2048 -Provider "Microsoft Enhanced RSA and AES Cryptographic Provider"
+
+$pwd = ConvertTo-SecureString -String "P@ssword123" -Force -AsPlainText
+Export-PfxCertificate -Cert $cert -FilePath "./cert.pfx" -Password $pwd
