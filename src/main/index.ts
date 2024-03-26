@@ -4,6 +4,8 @@ import { sendMessageOpenAI } from '../renderer/js/llm-models/openai';
 import { sendMessageGoogle } from '../renderer/js/llm-models/google';
 import fs from 'fs/promises';
 
+if (require('electron-squirrel-startup')) app.quit();
+
 const userDataPath = app.getPath('userData');
 
 function createWindow() {

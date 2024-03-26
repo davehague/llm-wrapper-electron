@@ -10,3 +10,4 @@ chat_logs
 
 # Secrets
 .env
+out/
