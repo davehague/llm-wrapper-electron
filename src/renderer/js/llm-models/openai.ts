@@ -15,6 +15,7 @@ const maxTokens = 4096;
 let openAI: OpenAI;
 let isInitialized = false;
 let systemPrompt = 'You are a helpful chatbot';
+let conversationHistory: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [];
 
 async function initializeOpenAI() {
   const openaiKey = await retrievekeyFromFile('OPENAI_API_KEY');
@@ -22,12 +23,10 @@ async function initializeOpenAI() {
   const settingsDocument = await loadSettingsFromFile();
   systemPrompt = JSON.parse(settingsDocument).systemPrompt;
   console.log('OpenAI initialized with system prompt:', systemPrompt);
+  conversationHistory.push({ role: "system", content: systemPrompt });
 }
 
-let conversationHistory: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
-  // { role: "system", content: "Keep your answers short, less than 1 paragraph. When giving advice, give no more than three options" },
-  { role: "system", content: systemPrompt },
-];
+
 
 export async function sendMessageOpenAI(userDataPath: string, text: string, model: string): Promise<string> {
   try {
