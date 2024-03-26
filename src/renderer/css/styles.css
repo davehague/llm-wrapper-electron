@@ -54,13 +54,13 @@ html {
 
 .llm-item img {
     max-width: 100%;
-    max-height: 40px;
-    min-width: 30px;
+    min-height: 50px;
+    min-width: 50px;
     border-radius: 4px;
 }
 
 .llm-item:hover {
-    background-color: lightyellow;
+    background-color: darkslategray;
 }
 
 #chat-container {
