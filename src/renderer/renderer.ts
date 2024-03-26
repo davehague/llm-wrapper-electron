@@ -5,6 +5,10 @@ window.llmChatHistoriesLoaded = {};
 window.llmId = '';
 window.llmName = '';
 
+document.getElementById('settings-button')!.addEventListener('click', () => {
+    window.location.href = 'settings.html';
+});
+
 document.addEventListener("DOMContentLoaded", () => {
     console.log('DOM loaded at:', new Date().toLocaleString());
     console.trace("DOMContentLoaded triggered");

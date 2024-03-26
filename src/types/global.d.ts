@@ -6,6 +6,8 @@ declare global {
         llmName: string;
         electronAPI: {
             loadChatHistory: (llmId: string) => Promise<{ role: string, message: string }[]>;
+            saveKey: (key: string, value: string) => Promise<boolean>;
+            retrieveKey: (key: string) => Promise<string>;
         };
         google: {
             sendMessage: (message: string) => Promise<string>;

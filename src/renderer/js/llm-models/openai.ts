@@ -4,14 +4,19 @@ dotenv.config();
 import { OpenAI } from 'openai'; // Assuming 'openai' package is ES6 module compatible
 import { saveToFile } from '../utilities/saveHistory';
 import { OpenAIMessage } from '@/types/llmWrapperTypes';
+import { retrievekeyFromFile } from '../utilities/keyManager';
 
 const llmService = "openai";
 const model = "gpt-3.5-turbo";
 
 const maxTokens = 4096;
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+let openAI: OpenAI;
+let isInitialized = false;
+
+async function initializeOpenAI() {
+  const openaiKey = await retrievekeyFromFile('OPENAI_API_KEY');
+  openAI = new OpenAI({ apiKey: openaiKey });
+}
 
 let conversationHistory: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
   { role: "system", content: "Keep your answers short, less than 1 paragraph. When giving advice, give no more than three options" },
@@ -19,10 +24,15 @@ let conversationHistory: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = 
 
 export async function sendMessageOpenAI(userDataPath: string, text: string): Promise<string> {
   try {
+    if(!isInitialized) {
+      await initializeOpenAI();
+      isInitialized = true;
+    }
+
     const userMessage: OpenAIMessage = { role: "user", content: text };
     conversationHistory.push(userMessage);
 
-    const completion = await openai.chat.completions.create({
+    const completion = await openAI.chat.completions.create({
       model: model,
       messages: conversationHistory
     });
@@ -56,7 +66,7 @@ function pruneConversationHistoryToTokenLimit(maxTokens: number): void {
   let index = conversationHistory.length;
   while (index-- > 0 && totalTokens <= maxTokens) {
     const messageText = conversationHistory[index].content;
-    
+
     totalTokens += approximateTokenCount(messageText as string);
   }
 

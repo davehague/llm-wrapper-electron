@@ -3,6 +3,7 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import { sendMessageOpenAI } from '../renderer/js/llm-models/openai';
 import { sendMessageGoogle } from '../renderer/js/llm-models/google';
 import fs from 'fs/promises';
+import { saveKeyToFile, retrievekeyFromFile } from '../renderer/js/utilities/keyManager';
 
 if (require('electron-squirrel-startup')) app.quit();
 
@@ -45,6 +46,14 @@ app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow();
   }
+});
+
+ipcMain.handle('save-key', async (event, keyName, keyValue) => {
+  return saveKeyToFile(keyName, keyValue);
+});
+
+ipcMain.handle('retrieve-key', async (event, keyName) => {
+  return retrievekeyFromFile(keyName);
 });
 
 ipcMain.handle('send-message-openai', async (event, message) => {

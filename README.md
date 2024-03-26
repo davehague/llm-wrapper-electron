@@ -12,7 +12,7 @@ This is an Electron app which is intended to be a wrapper around multiple LLMs. 
 OPENAI_API_KEY=sk-YOUR-KEY-HERE
 ```
 
-Then, run `npm run build` to build and then `npm run dev` to start the project.
+Then, run `npm run build` to build and then `npm start` to start the project.
 
 
 # Notes about Electron
@@ -37,9 +37,14 @@ This project uses `nodemon` to perform hot reload
 **renderer.js** file is the script that controls the web pages. It's akin to the JavaScript you would write for a regular web page, and it runs in the "renderer process."
 
 # Build
+`npm run make` and then check `\path-to\llm-wrapper-electron\out\make\squirrel.windows\x64`
+
+"C:\Users\david\source\llm-wrapper-electron\node_modules\electron-winstaller\vendor\signtool.exe" sign /a /f "C:\Users\david\source\llm-wrapper-electron\cert.pfx" /p "P@ssword123" "C:\Users\david\AppData\Local\SquirrelTemp\tempa\lib\net45\ffmpeg.dll"
+
 
 ## Creating a self signed certificate
-$cert = New-SelfSignedCertificate -DnsName davehague.com -CertStoreLocation "cert:\CurrentUser\My" -KeyAlgorithm RSA -KeyLength 2048 -Provider "Microsoft Enhanced RSA and AES Cryptographic Provider"
+$cert = New-SelfSignedCertificate -DnsName davehague.com -CertStoreLocation "cert:\CurrentUser\My" -KeyUsage DigitalSignature -Type CodeSigningCert -KeyAlgorithm RSA -KeyLength 2048 -Provider "Microsoft Enhanced RSA and AES Cryptographic Provider"
+
 
 $pwd = ConvertTo-SecureString -String "P@ssword123" -Force -AsPlainText
 Export-PfxCertificate -Cert $cert -FilePath "./cert.pfx" -Password $pwd

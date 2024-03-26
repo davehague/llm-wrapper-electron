@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Settings</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+
+<body>
+    <div id="settings-container">
+        <div id="settings-navigation">
+            <img src="../assets/back-arrow.png" alt="Back" id="save-settings" class="settings-nav-button">
+            <img src="../assets/x-button.png" alt="Cancel" id="cancel-settings" class="settings-nav-button">
+        </div>
+        <div id="api-keys-form">
+            <label for="openai-api-key">OpenAI API Key:</label>
+            <input type="text" id="openai-api-key" name="openai-api-key" placeholder="Enter OpenAI API Key">
+            
+            <label for="google-gemini-api-key">Google Gemini API Key:</label>
+            <input type="text" id="google-gemini-api-key" name="google-gemini-api-key" placeholder="Enter Google Gemini API Key">
+        </div>
+    </div>
+    <script src="renderer/js/settings.js"></script>
+</body>
+
+</html>
