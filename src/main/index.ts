@@ -4,6 +4,7 @@ import { sendMessageOpenAI } from '../renderer/js/llm-models/openai';
 import { sendMessageGoogle } from '../renderer/js/llm-models/google';
 import fs from 'fs/promises';
 import { saveKeyToFile, retrievekeyFromFile } from '../renderer/js/utilities/keyManager';
+import { saveSettingsToFile, loadSettingsFromFile } from '../renderer/js/utilities/settingsManager';
 
 if (require('electron-squirrel-startup')) app.quit();
 
@@ -56,6 +57,14 @@ ipcMain.handle('retrieve-key', async (event, keyName) => {
   return retrievekeyFromFile(keyName);
 });
 
+ipcMain.handle('save-settings', async (event, jsonDocument) => {
+  return saveSettingsToFile(jsonDocument);
+});
+
+ipcMain.handle('load-settings', async (event) => {
+  return loadSettingsFromFile();
+});
+
 ipcMain.handle('send-message-openai', async (event, message, model) => {
   try {
     console.log("Received message in main process:", message);
@@ -100,7 +109,6 @@ ipcMain.handle('load-chat-history', async (event, llmId) => {
 });
 
 function transformMessages(llmId: string, messages: any[]) {
-  console.log('Transforming messages for llmId:', llmId);
   switch (true) {
     case llmId.startsWith('gpt'):
       return transformRoleContentMessages(messages);
@@ -114,7 +122,6 @@ function transformMessages(llmId: string, messages: any[]) {
 
 
 function transformRoleContentMessages(messages: any[]) {
-  console.log('Transforming role-content messages:', messages);
   return messages.map((message) => {
     return {
       role: message.role,
@@ -124,7 +131,6 @@ function transformRoleContentMessages(messages: any[]) {
 }
 
 function transformGeminiMessages(messages: any[]) {
-  console.log('Transforming Gemini messages:', messages);
   return messages.map((message) => {
     return {
       role: message.role,

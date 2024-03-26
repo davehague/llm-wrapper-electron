@@ -1,17 +1,26 @@
+let systemSettingsJson: any = {};
+
 document.getElementById('save-settings')!.addEventListener('click', async () => {
     const openaiKeyElement = <HTMLInputElement>document.getElementById('openai-api-key');
     const googleKeyElement = <HTMLInputElement>document.getElementById('google-gemini-api-key');
-
+    const systemPromptElement = <HTMLTextAreaElement>document.getElementById('system-prompt-text');
 
     const openaiKey = openaiKeyElement.value;
     const googleKey = googleKeyElement.value;
-
+    const systemPrompt = systemPromptElement.value;
+    console.log('System prompt:', systemPrompt);
     try {
+        if(!systemSettingsJson) {
+            loadSettings();
+        }
+        systemSettingsJson.systemPrompt = systemPrompt;
+        await window.electronAPI.saveSettings(JSON.stringify(systemSettingsJson));
+
         const openAISavedSuccessfully = await window.electronAPI.saveKey('OPENAI_API_KEY', openaiKey);
         const googleGeminiSavedSuccessfully = await window.electronAPI.saveKey('GEMINI_API_KEY', googleKey);
 
         if (openAISavedSuccessfully && googleGeminiSavedSuccessfully) {
-            alert('API keys saved successfully!');
+            console.log('API keys saved successfully!');
         } else {
             alert('Failed to save API keys. Please try again.');
         }
@@ -50,4 +59,20 @@ async function loadAPIKeys() {
     }
 }
 
+async function loadSettings() {
+    try {
+        const systemPrompt = document.getElementById('system-prompt-text') as HTMLInputElement;
+
+        const settings = await window.electronAPI.loadSettings();
+        if (settings) {
+            systemSettingsJson = settings ? JSON.parse(settings) : {};
+            systemPrompt.value = systemSettingsJson.systemPrompt;
+        }
+    } catch (error) {
+        console.error('Error loading settings:', error);
+        alert('Failed to load settings. Please try again.');
+    }
+}
+
 loadAPIKeys();
+loadSettings();

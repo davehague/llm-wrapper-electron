@@ -24,8 +24,6 @@ async function retrievekeyFromFile(keyName: string): Promise<string> {
     try {
         const userDataPath = app.getPath('userData');
         const filePath = path.join(userDataPath, `${keyName}.txt`);
-        console.log('Retrieving key from:', filePath);
-
         const fileExists = await fs.access(filePath).then(() => true).catch(() => false);
 
         if (fileExists) {

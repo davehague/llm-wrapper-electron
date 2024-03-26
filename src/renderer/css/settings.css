@@ -15,6 +15,12 @@ input {
     width: 300px;
 }
 
+textarea {
+    width: 100%;
+    margin-top: 30px;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif, "Helvetica Neue", Arial;
+}
+
 #settings-navigation {
     position: absolute;
     width: 100%;
@@ -42,19 +48,21 @@ input {
 #api-keys-form table {
     border-collapse: collapse;
     border-spacing: 0;
-    margin: auto; 
+    margin: auto;
 }
 
 #api-keys-form td {
-    padding: 10px; 
-    vertical-align: middle; 
+    padding: 10px;
+    vertical-align: middle;
 }
 
 
 /* Fix for the settings container to ensure full height */
 #settings-container {
     position: relative;
-    height: 100vh; /* Using vh instead of % for full height */
+    height: 100vh;
+    /* Using vh instead of % for full height */
     width: 100%;
-    padding-top: 50px; /* Give enough space for the top navigation bar */
+    padding-top: 50px;
+    /* Give enough space for the top navigation bar */
 }

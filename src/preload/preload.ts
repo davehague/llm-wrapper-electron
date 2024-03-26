@@ -4,6 +4,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
     loadChatHistory: (llmId: string) => ipcRenderer.invoke('load-chat-history', llmId),
     saveKey: (key: string, value: string) => ipcRenderer.invoke('save-key', key, value),
     retrieveKey: (key: string) => ipcRenderer.invoke('retrieve-key', key),
+    saveSettings: (settings: string) => ipcRenderer.invoke('save-settings', settings),
+    loadSettings: () => ipcRenderer.invoke('load-settings'),
 });
 
 contextBridge.exposeInMainWorld('openAI', {

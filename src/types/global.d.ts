@@ -8,6 +8,8 @@ declare global {
             loadChatHistory: (llmId: string) => Promise<{ role: string, message: string }[]>;
             saveKey: (key: string, value: string) => Promise<boolean>;
             retrieveKey: (key: string) => Promise<string>;
+            saveSettings: (jsonDocument: string) => Promise<boolean>; 
+            loadSettings: () => Promise<string | null>; 
         };
         google: {
             sendMessage: (message: string, model: string) => Promise<string>;

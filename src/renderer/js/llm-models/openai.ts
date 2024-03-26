@@ -5,21 +5,28 @@ import { OpenAI } from 'openai'; // Assuming 'openai' package is ES6 module comp
 import { saveToFile } from '../utilities/saveHistory';
 import { OpenAIMessage } from '@/types/llmWrapperTypes';
 import { retrievekeyFromFile } from '../utilities/keyManager';
+import { hasYouTubeUrl, getTranscript } from '../utilities/youtube';
+import { loadSettingsFromFile } from '../utilities/settingsManager';
+
 
 const llmService = "openai";
 
 const maxTokens = 4096;
 let openAI: OpenAI;
 let isInitialized = false;
+let systemPrompt = 'You are a helpful chatbot';
 
 async function initializeOpenAI() {
   const openaiKey = await retrievekeyFromFile('OPENAI_API_KEY');
   openAI = new OpenAI({ apiKey: openaiKey });
+  const settingsDocument = await loadSettingsFromFile();
+  systemPrompt = JSON.parse(settingsDocument).systemPrompt;
+  console.log('OpenAI initialized with system prompt:', systemPrompt);
 }
 
 let conversationHistory: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
   // { role: "system", content: "Keep your answers short, less than 1 paragraph. When giving advice, give no more than three options" },
-  { role: "system", content: "You are a helpful chatbot." },
+  { role: "system", content: systemPrompt },
 ];
 
 export async function sendMessageOpenAI(userDataPath: string, text: string, model: string): Promise<string> {
@@ -29,8 +36,19 @@ export async function sendMessageOpenAI(userDataPath: string, text: string, mode
       isInitialized = true;
     }
 
-    const userMessage: OpenAIMessage = { role: "user", content: text };
-    conversationHistory.push(userMessage);
+    let userMessage: OpenAIMessage;
+    if(hasYouTubeUrl(text)) {
+      const transcript = await getTranscript(text);
+      const fullTranscript = transcript.map((entry: any) => entry.text).join(' ');
+      //console.log('YouTube transcript:', fullTranscript);
+
+      userMessage = { role: "user", content: [text, fullTranscript].join('\n\n Transcript is below:\n\n') };
+      conversationHistory.push(userMessage);
+    }
+    else {
+      userMessage = { role: "user", content: text };
+      conversationHistory.push(userMessage);
+    }
 
     const completion = await openAI.chat.completions.create({
       model: model,
