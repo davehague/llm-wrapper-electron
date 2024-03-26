@@ -56,7 +56,6 @@ async function sendMessageGoogle(userDataPath: string, originalMessage: string):
             .catch((error: any) => console.error('Failed to save file:', error));
 
         chatHistory = await chat.getHistory();
-        console.log('chatHistory:', chatHistory);
         return text;
     } catch (error) {
         console.error((error as any).response?.promptFeedback);
