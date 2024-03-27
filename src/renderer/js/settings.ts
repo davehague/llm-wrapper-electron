@@ -3,10 +3,12 @@ let systemSettingsJson: any = {};
 document.getElementById('save-settings')!.addEventListener('click', async () => {
     const openaiKeyElement = <HTMLInputElement>document.getElementById('openai-api-key');
     const googleKeyElement = <HTMLInputElement>document.getElementById('google-gemini-api-key');
+    const anthropicKeyElement = <HTMLInputElement>document.getElementById('anthropic-api-key');
     const systemPromptElement = <HTMLTextAreaElement>document.getElementById('system-prompt-text');
 
     const openaiKey = openaiKeyElement.value;
     const googleKey = googleKeyElement.value;
+    const anthropicKey = anthropicKeyElement.value;
     const systemPrompt = systemPromptElement.value;
     console.log('System prompt:', systemPrompt);
     try {
@@ -18,8 +20,9 @@ document.getElementById('save-settings')!.addEventListener('click', async () => 
 
         const openAISavedSuccessfully = await window.electronAPI.saveKey('OPENAI_API_KEY', openaiKey);
         const googleGeminiSavedSuccessfully = await window.electronAPI.saveKey('GEMINI_API_KEY', googleKey);
+        const anthropicSavedSuccessfully = await window.electronAPI.saveKey('ANTHROPIC_API_KEY', anthropicKey);
 
-        if (openAISavedSuccessfully && googleGeminiSavedSuccessfully) {
+        if (openAISavedSuccessfully && googleGeminiSavedSuccessfully && anthropicSavedSuccessfully) {
             console.log('API keys saved successfully!');
         } else {
             alert('Failed to save API keys. Please try again.');
@@ -41,12 +44,17 @@ document.getElementById('cancel-settings')!.addEventListener('click', () => {
 
 async function loadAPIKeys() {
     try {
+        const anthropicKey = await window.electronAPI.retrieveKey('ANTHROPIC_API_KEY');
         const openaiKey = await window.electronAPI.retrieveKey('OPENAI_API_KEY');
         const googleKey = await window.electronAPI.retrieveKey('GEMINI_API_KEY');
 
+        const anthropicKeyElement = document.getElementById('anthropic-api-key') as HTMLInputElement;
         const openaiKeyElement = document.getElementById('openai-api-key') as HTMLInputElement;
         const googleKeyElement = document.getElementById('google-gemini-api-key') as HTMLInputElement;
 
+        if (anthropicKeyElement && anthropicKey !== null) {
+            anthropicKeyElement.value = anthropicKey;
+        }
         if (openaiKeyElement && openaiKey !== null) {
             openaiKeyElement.value = openaiKey;
         }

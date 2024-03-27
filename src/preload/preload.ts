@@ -8,6 +8,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
     loadSettings: () => ipcRenderer.invoke('load-settings'),
 });
 
+contextBridge.exposeInMainWorld('anthropic', {
+    sendMessage: (message: string, model: string) => ipcRenderer.invoke('send-message-anthropic', message, model),
+});
+
 contextBridge.exposeInMainWorld('openAI', {
     sendMessage: (message: string, model: string) => ipcRenderer.invoke('send-message-openai', message, model),
 });

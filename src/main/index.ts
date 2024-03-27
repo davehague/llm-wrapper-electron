@@ -1,5 +1,6 @@
 import path from 'path';
 import { app, BrowserWindow, ipcMain } from 'electron';
+import { sendMessageAnthropic } from '../renderer/js/llm-models/anthropic';
 import { sendMessageOpenAI } from '../renderer/js/llm-models/openai';
 import { sendMessageGoogle } from '../renderer/js/llm-models/google';
 import fs from 'fs/promises';
@@ -65,6 +66,17 @@ ipcMain.handle('load-settings', async (event) => {
   return loadSettingsFromFile();
 });
 
+ipcMain.handle('send-message-anthropic', async (event, message, model) => {
+  try {
+    console.log("Received message in main process:", message);
+    const response = await sendMessageAnthropic(userDataPath, message, model);
+    return response;
+  } catch (error) {
+    console.error('Error handling sendMessage in main process:', error);
+    return "Sorry, I couldn't send your message.";
+  }
+});
+
 ipcMain.handle('send-message-openai', async (event, message, model) => {
   try {
     console.log("Received message in main process:", message);
@@ -110,12 +122,13 @@ ipcMain.handle('load-chat-history', async (event, llmId) => {
 
 function transformMessages(llmId: string, messages: any[]) {
   switch (true) {
+    case llmId.startsWith('claude'):
     case llmId.startsWith('gpt'):
       return transformRoleContentMessages(messages);
     case llmId.startsWith('gemini'):
       return transformGeminiMessages(messages);
     default:
-      console.error('Not a recognized llmId:', llmId);
+      console.error('Error transforming messages.  Not a recognized llmId:', llmId);
       return [];
   }
 }

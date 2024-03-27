@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    function handleLLMItemClick(item: Element) {
+    async function handleLLMItemClick(item: Element) {
         console.log('LLM item clicked at:', new Date().toLocaleString());
         const isSelected = item.classList.contains('llm-item-selected');
         const llmItems = document.querySelectorAll('.llm-item');
@@ -36,17 +36,13 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!isSelected) {
             item.classList.add('llm-item-selected');
             clearChatWindow();
+            await loadAndStoreChatHistory(item.id, true);
 
             window.llmName = item.getAttribute('llmname') ?? '';
             window.llmId = item.id;
 
-            const chatHistory = window.llmChatHistoriesLoaded[item.id];
-            if (chatHistory) {
-                displayChatHistory(chatHistory); // Adjust this to handle the pre-parsed chat history
-            }
+            await onLLMItemSelected(item.id);
         }
-
-        onLLMItemSelected(item.id);
     }
 
     llmItems.forEach(item => {
@@ -58,8 +54,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-async function loadAndStoreChatHistory(llmId: string) {
-    if (!window.llmChatHistoriesLoaded[llmId]) {
+async function loadAndStoreChatHistory(llmId: string, reload = false) {
+    if (reload || !window.llmChatHistoriesLoaded[llmId]) {
         try {
             const chatHistory = await window.electronAPI.loadChatHistory(llmId);
             if (chatHistory) {
@@ -71,18 +67,14 @@ async function loadAndStoreChatHistory(llmId: string) {
     }
 }
 
-
 async function onLLMItemSelected(llmId: string) {
     console.log('LLM item selected at:', new Date().toLocaleString(), 'ID:', llmId);
 
-    // Check if the chat for this LLM has already been loaded
-    if (!window.llmChatHistoriesLoaded[llmId]) {
-        try {
-            await loadAndStoreChatHistory(llmId);
-            displayChatHistory(window.llmChatHistoriesLoaded[llmId]);
-        } catch (error) {
-            console.error('Error loading chat history for', llmId, ':', error);
-        }
+    try {
+        await loadAndStoreChatHistory(llmId);
+        displayChatHistory(window.llmChatHistoriesLoaded[llmId]);
+    } catch (error) {
+        console.error('Error loading chat history for', llmId, ':', error);
     }
 }
 
@@ -100,7 +92,12 @@ function displayChatHistory(chatHistory: { role: string; message: string; }[]) {
             });
         }
 
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+        //  Ensure the scroll happens after the content has been fully rendered
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            });
+        });
     }
 }
 
@@ -121,6 +118,9 @@ document.getElementById('message-input')?.addEventListener('keydown', async (eve
             }
             else if (window.llmId.startsWith('gpt')) {
                 response = await window.openAI.sendMessage(message, window.llmId);
+            }
+            else if (window.llmId.startsWith('claude')) {
+                response = await window.anthropic.sendMessage(message, window.llmId);
             }
             else {
                 response = `Not a recognized llmId: ${window.llmId}`;

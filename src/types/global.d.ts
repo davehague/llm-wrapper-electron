@@ -11,10 +11,13 @@ declare global {
             saveSettings: (jsonDocument: string) => Promise<boolean>; 
             loadSettings: () => Promise<string | null>; 
         };
-        google: {
+        anthropic: {
             sendMessage: (message: string, model: string) => Promise<string>;
         };
         openAI: {
+            sendMessage: (message: string, model: string) => Promise<string>;
+        };
+        google: {
             sendMessage: (message: string, model: string) => Promise<string>;
         };
     }
