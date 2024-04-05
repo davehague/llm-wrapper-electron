@@ -56,13 +56,9 @@ textarea {
     vertical-align: middle;
 }
 
-
-/* Fix for the settings container to ensure full height */
 #settings-container {
     position: relative;
     height: 100vh;
-    /* Using vh instead of % for full height */
     width: 100%;
     padding-top: 50px;
-    /* Give enough space for the top navigation bar */
 }

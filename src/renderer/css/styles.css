@@ -15,33 +15,30 @@ html {
 
 #navigation-bar {
     width: 60px;
-    background-color: #2c2f33;
+    background-color: lightslategray;
     color: white;
     display: flex;
     flex-direction: column;
 }
 
 .message {
-    margin: 10px;
-    padding: 5px;
-    border-radius: 5px;
+    margin: 8px; 
+    padding: 10px; 
+    border-radius: 10px; 
+    color: black; 
 }
 
 .user-message {
-    background-color: #555;
-    text-align: left;
+    background-color: #fff; 
 }
 
 .llm-message {
-    background-color: darkslategray;
-    text-align: left;
+    background-color: #eee; 
 }
-
 .side-nav-button,
 .llm-item {
     padding: 10px;
     margin: 5px;
-    border-bottom: 1px solid #23272a;
     cursor: pointer;
     display: flex;
     justify-content: center;
@@ -50,7 +47,7 @@ html {
 }
 
 .llm-item-selected {
-    background-color: #555; 
+    background-color: darkslategray; 
 }
 
 .side-nav-button img,
@@ -73,8 +70,9 @@ html {
 
 #chat-messages {
     flex-grow: 1;
-    padding: 5px;
-    background-color: #36393f;
+    padding: 10px; 
+    margin-top: 5px;
+    background-color: lightblue; 
     color: white;
     overflow-y: auto;
 }
@@ -83,7 +81,7 @@ html {
     height: 20%;
     min-height: 20%;
     padding: 5px;
-    background-color: #40444b;
+    background-color: #eee;
 }
 
 #message-input {
@@ -97,11 +95,13 @@ html {
     border-width: medium;
     border-radius: 4px;
     resize: none;
-    background-color: #40444b;
-    color: #ddd;
+    background-color: #fff;
+    color: black;
     margin: 0;
 }
 
 textarea {
     font-family: "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif, "Helvetica Neue", Arial;
+    line-height: 1.5; 
+    color: #cccccc; 
 }
