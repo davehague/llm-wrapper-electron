@@ -1,51 +1,69 @@
 <!DOCTYPE html>
 <html>
-
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>LLM Wrapper</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
-</head>
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+  </head>
 
-<body>
+  <body>
     <div id="app-container">
-        <div id="navigation-bar">
-            <div class="llm-item" id="gpt-3.5-turbo" llmName="ChatGPT 3.5T">
-                <img src="../assets/OpenAI3.5.png" alt="OpenAI Logo">
-            </div>
-            <div class="llm-item" id="gpt-4-turbo-preview" llmName="ChatGPT 4.5T">
-                <img src="../assets/OpenAI4.5.png" alt="OpenAI Logo">
-            </div>
-            <div class="llm-item" id="gemini-1.0-pro" llmName="Gemini Pro 1.0">
-                <img src="../assets/Gemini1.0.png" alt="Google Gemini Logo">
-            </div>
-            <!-- <div class="llm-item" id="gemini-1.0-pro-latest" llmName="Gemini Pro 1.0 Latest">
+      <div id="navigation-bar">
+        <div class="llm-item" id="gpt-3.5-turbo" llmName="ChatGPT 3.5T">
+          <img src="../assets/OpenAI3.5.png" alt="OpenAI Logo" />
+        </div>
+        <div class="llm-item" id="gpt-4-turbo-preview" llmName="ChatGPT 4.5T">
+          <img src="../assets/OpenAI4.5.png" alt="OpenAI Logo" />
+        </div>
+        <div class="llm-item" id="gemini-1.0-pro" llmName="Gemini Pro 1.0">
+          <img src="../assets/Gemini1.0.png" alt="Google Gemini Logo" />
+        </div>
+        <!-- <div class="llm-item" id="gemini-1.0-pro-latest" llmName="Gemini Pro 1.0 Latest">
                 <img src="../assets/Gemini1.5.png" alt="Google Gemini Logo">
             </div> -->
-            <div class="llm-item" id="claude-3-haiku-20240307" llmName="Claude 3 Haiku">
-                <img src="../assets/ClaudeHaiku.png" alt="Claude 3 Haiku Logo">
-            </div>
-            <div class="llm-item" id="claude-3-sonnet-20240229" llmName="Claude 3 Sonnet">
-                <img src="../assets/ClaudeSonnet.png" alt="Claude 3 Sonnet Logo">
-            </div>
-            <div class="llm-item" id="claude-3-opus-20240229" llmName="Claude 3 Opus">
-                <img src="../assets/ClaudeOpus.png" alt="Claude 3 Opus Logo">
-            </div>
-            <div class="side-nav-button" id="settings-button">
-                <img src="../assets/gear.png" alt="Settings">
-            </div>
+        <div
+          class="llm-item"
+          id="claude-3-haiku-20240307"
+          llmName="Claude 3 Haiku"
+        >
+          <img src="../assets/ClaudeHaiku.png" alt="Claude 3 Haiku Logo" />
         </div>
-        <div id="chat-container">
-            <div id="chat-messages">
-                <!-- Chat messages will be added here -->
-            </div>
-            <div id="message-input-container">
-                <textarea id="message-input" placeholder="Type a message..."></textarea>
-            </div>
+        <div
+          class="llm-item"
+          id="claude-3-sonnet-20240229"
+          llmName="Claude 3 Sonnet"
+        >
+          <img src="../assets/ClaudeSonnet.png" alt="Claude 3 Sonnet Logo" />
         </div>
+        <div
+          class="llm-item"
+          id="claude-3-opus-20240229"
+          llmName="Claude 3 Opus"
+        >
+          <img src="../assets/ClaudeOpus.png" alt="Claude 3 Opus Logo" />
+        </div>
+        <div class="side-nav-button" id="settings-button">
+          <img src="../assets/gear.png" alt="Settings" />
+        </div>
+      </div>
+      <div id="chat-container">
+        <div id="chat-messages">
+          <!-- Chat messages will be added here -->
+        </div>
+        <div id="message-input-container">
+          <textarea
+            id="message-input"
+            placeholder="Type a message..."
+          ></textarea>
+        </div>
+      </div>
     </div>
     <script src="renderer/renderer.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-</body>
-
+    <link
+      rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/default.min.css"
+    />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
+  </body>
 </html>

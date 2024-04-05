@@ -49,7 +49,6 @@ export async function sendMessageOpenAI(userDataPath: string, text: string, mode
 
     const completion = await openAI.chat.completions.create({
       model: model,
-      max_tokens: 1024,
       messages: conversationHistory
     });
 

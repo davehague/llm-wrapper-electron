@@ -102,7 +102,7 @@ function displayChatHistory(chatHistory: { role: string; message: string; }[]) {
 }
 
 document.getElementById('message-input')?.addEventListener('keydown', async (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === 'Enter' && !event.shiftKey) {
         event.preventDefault();
 
         const inputElement = event.target as HTMLInputElement;
@@ -133,6 +133,7 @@ document.getElementById('message-input')?.addEventListener('keydown', async (eve
 
 declare var marked: {
     parse: (markdown: string) => Promise<string>;
+    setOptions: (options: any) => void; 
 };
 
 async function addMessageToChat(sender: string, message: string) {
@@ -144,13 +145,26 @@ async function addMessageToChat(sender: string, message: string) {
             messageDiv.classList.add('message');
             messageDiv.classList.add(sender === 'User' ? 'user-message' : 'llm-message');
             messageDiv.innerHTML = await marked.parse(message);
-
             chatMessages.appendChild(messageDiv);
-
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
-    }
-    catch (error) {
+    } catch (error) {
         console.error('Error adding message to chat:', error);
     }
 }
+
+declare var hljs: {
+    highlight: (code: string, options: { language: string }) => { value: string };
+    getLanguage: (name: string) => boolean | object;
+};
+
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    marked.setOptions({
+        langPrefix: 'language-', 
+        highlight: function(code: any, lang: any) {
+            const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+            return hljs.highlight(code, { language }).value;
+        },
+    });
+});
